@@ -1,43 +1,53 @@
 <template>
-  <q-page class="row items-center justify-evenly">
-    <example-component
-      title="Example component"
-      active
-      :todos="todos"
-      :meta="meta"
-    ></example-component>
+  <q-page class="row items-start justify-center text-center">
+    <q-banner ref="banner" v-if="mode === 'pwa'" class="bg-orange col-12">
+      <template v-slot:avatar>
+        <q-icon name="sym_o_warning" />
+      </template>
+      <span class="text-h5" v-html="$t('index.pwaWarn')" />
+    </q-banner>
+
+    <div class="col-12" :class="{ 'self-center': mode !== 'pwa' }">
+      <div class="text-h1 text-center brand-font q-pb-xl">DOTYKER</div>
+
+      <h3>{{ $t('index.congratulations') }}</h3>
+      <p class="text-subtitle1">{{ $t('index.subtitle') }}</p>
+
+      <p class="text-body1" v-html="$t('index.instructions')"></p>
+
+      <div class="q-pa-md q-gutter-sm">
+        <q-btn
+          size="xl"
+          :label="$t('index.standalone')"
+          icon="sym_o_jamboard_kiosk"
+          @click="chooseStandalone"
+        />
+        <q-btn size="xl" icon="sym_o_graph_2" :label="$t('index.managed')" @click="chooseManaged" />
+      </div>
+      <div>
+        <q-btn
+          size="xl"
+          icon="sym_o_menu_book"
+          :label="$t('index.docs')"
+          @click="chooseStandalone"
+        />
+      </div>
+    </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { Todo, Meta } from 'components/models';
-import ExampleComponent from 'components/ExampleComponent.vue';
 
-const todos = ref<Todo[]>([
-  {
-    id: 1,
-    content: 'ct1'
-  },
-  {
-    id: 2,
-    content: 'ct2'
-  },
-  {
-    id: 3,
-    content: 'ct3'
-  },
-  {
-    id: 4,
-    content: 'ct4'
-  },
-  {
-    id: 5,
-    content: 'ct5'
-  }
-]);
+const stepper = ref();
+const mode = process.env.MODE;
+console.log(mode);
 
-const meta = ref<Meta>({
-  totalCount: 1200
-});
+const chooseStandalone = () => {
+  stepper.value.next();
+};
+
+const chooseManaged = () => {
+  stepper.value.next(); // Move to the next step
+};
 </script>
