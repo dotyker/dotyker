@@ -1,1 +1,107 @@
 // app global css in SCSS form
+
+@font-face {
+  font-family: 'Audiowide';
+  font-weight: 400;
+  font-style: normal;
+  src: url(./fonts/Audiowide-Regular.ttf);
+}
+
+.brand-font {
+  font-family: 'Audiowide', sans-serif;
+}
+
+body.body--dark {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  min-height: 100vh;
+}
+
+body.body--light {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+  min-height: 100vh;
+}
+
+/* Header gradient for depth */
+.header-gradient {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Enhanced card styling */
+.card-elevated {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-elevated:hover {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.07),
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  transform: translateY(-1px);
+}
+
+/* Modern table styling */
+.modern-table {
+  box-shadow: none;
+  background: transparent;
+}
+
+.modern-table :deep(.q-table__top) {
+  padding: 0;
+  background: transparent;
+}
+
+.modern-table :deep(.q-table__bottom) {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(248, 250, 252, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+.modern-table :deep(.q-table__container) {
+  background: transparent;
+}
+
+.modern-table :deep(th) {
+  background: rgba(248, 250, 252, 0.8);
+  backdrop-filter: blur(10px);
+  color: #475569;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+}
+
+.modern-table :deep(td) {
+  background: rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(5px);
+}
+
+.modern-table :deep(tr:hover td) {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(15px);
+}
+
+.modern-table :deep(.q-table tbody tr:nth-child(even) td) {
+  background: rgba(248, 250, 252, 0.3);
+}
+
+.modern-table :deep(.q-table tbody tr:nth-child(even):hover td) {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Enhanced mobile drawer */
+.q-drawer :deep(.q-drawer__content) {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+}
