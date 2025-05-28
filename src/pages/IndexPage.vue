@@ -7,7 +7,11 @@
       <span class="text-h5" v-html="$t('index.pwaWarn')" />
     </q-banner>
 
-    <div class="col-12" :class="{ 'self-center': mode !== 'pwa' }">
+    <div
+      v-if="currentContent === 'initial'"
+      class="col-12"
+      :class="{ 'self-center': mode !== 'pwa' }"
+    >
       <div class="text-h1 text-center brand-font q-pb-xl">DOTYKER</div>
 
       <h3>{{ $t('index.congratulations') }}</h3>
@@ -33,29 +37,37 @@
         />
       </div>
     </div>
+    <div v-if="currentContent === 'standalone'">
+      <standalone-wizard label="test" />
+      <q-btn size="xl" icon="sym_o_arrow_back" :label="$t('common.back')" @click="goBack()" />
+    </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from 'vue'
+import StandaloneWizard from 'components/StandaloneWizard.vue'
 
-const stepper = ref();
-const mode = process.env.MODE;
-console.log(mode);
+const currentContent = ref<'initial' | 'standalone' | 'managed'>('initial')
+const mode = process.env.MODE
 
 const chooseStandalone = () => {
-  stepper.value.next();
-};
+  currentContent.value = 'standalone'
+}
 
 const chooseManaged = () => {
-  stepper.value.next(); // Move to the next step
-};
+  currentContent.value = 'managed'
+}
+
+const goBack = () => {
+  currentContent.value = 'initial'
+}
 
 const navigateDocumentation = () => {
   if (process.env.MODE === 'electron') {
-    window.location.href = '/browser?url=https://dotyker.org/docs/category/overview';
+    window.location.href = '/browser?url=https://dotyker.org/docs/category/overview'
   } else {
-    window.open('https://dotyker.org/docs/category/overview', '_blank');
+    window.open('https://dotyker.org/docs/category/overview', '_blank')
   }
-};
+}
 </script>

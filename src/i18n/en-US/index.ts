@@ -1,7 +1,9 @@
-// This is just an example,
-// so you can safely delete all default props below
-
 export default {
+  common: {
+    back: 'Back',
+    submit: 'Submit',
+    reset: 'Reset',
+  },
   index: {
     congratulations: 'Congratulations!',
     subtitle: "You're just a few steps away from setting up your digital signage.",
@@ -13,4 +15,21 @@ export default {
     pwaWarn:
       '<span class="brand-font">DOTYKER</span> is currently running in your browser. To access all features, please install the Electron desktop application.',
   },
-};
+  standaloneWizard: {
+    interactive: {
+      label: 'Interactive Modes',
+      multiApp: 'Multi-App',
+      singleApp: 'Single Web',
+      publicBrowser: 'Public Browser',
+    },
+    nonInteractive: {
+      label: 'Noninteractive Modes',
+      staticWeb: 'Static Web',
+      playlistWeb: 'Web Playlist',
+      media: 'Media Playlist',
+    },
+    colorTheme: 'Color Theme',
+    name: 'Device name',
+    nameDescription: 'Device name',
+  },
+}

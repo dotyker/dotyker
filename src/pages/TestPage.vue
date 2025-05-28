@@ -138,35 +138,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from 'vue'
 
 // Types
 interface Stat {
-  label: string;
-  value: string;
-  trend: number;
-  icon: string;
+  label: string
+  value: string
+  trend: number
+  icon: string
 }
 
 interface TableRow {
-  id: number;
-  name: string;
-  email: string;
-  status: 'active' | 'pending' | 'inactive';
-  created: string;
+  id: number
+  name: string
+  email: string
+  status: 'active' | 'pending' | 'inactive'
+  created: string
 }
 
 interface TableColumn {
-  name: string;
-  label: string;
-  field: string | ((row: TableRow) => unknown);
-  align?: 'left' | 'right' | 'center';
-  sortable?: boolean;
+  name: string
+  label: string
+  field: string | ((row: TableRow) => unknown)
+  align?: 'left' | 'right' | 'center'
+  sortable?: boolean
 }
 
 // Reactive state
-const activeTab = ref<string>('dashboard');
-const searchText = ref<string>('');
+const activeTab = ref<string>('dashboard')
+const searchText = ref<string>('')
 
 // Static data
 const stats = ref<Stat[]>([
@@ -194,7 +194,7 @@ const stats = ref<Stat[]>([
     trend: 15.3,
     icon: 'sym_o_trending_up',
   },
-]);
+])
 
 const tableColumns: TableColumn[] = [
   {
@@ -231,7 +231,7 @@ const tableColumns: TableColumn[] = [
     field: 'actions',
     align: 'center',
   },
-];
+]
 
 const tableData = ref<TableRow[]>([
   {
@@ -269,69 +269,69 @@ const tableData = ref<TableRow[]>([
     status: 'active',
     created: '2024-01-11',
   },
-]);
+])
 
 // Computed properties
 const filteredTableData = computed(() => {
   if (!searchText.value) {
-    return tableData.value;
+    return tableData.value
   }
 
-  const search = searchText.value.toLowerCase();
+  const search = searchText.value.toLowerCase()
   return tableData.value.filter(
     (row) =>
       row.name.toLowerCase().includes(search) ||
       row.email.toLowerCase().includes(search) ||
       row.status.toLowerCase().includes(search),
-  );
-});
+  )
+})
 
 const getPageTitle = (): string => {
   const titles: Record<string, string> = {
     dashboard: 'Dashboard',
     analytics: 'Analytics',
     reports: 'Reports',
-  };
-  return titles[activeTab.value] || 'Dashboard';
-};
+  }
+  return titles[activeTab.value] || 'Dashboard'
+}
 
 const getPageSubtitle = (): string => {
   const subtitles: Record<string, string> = {
     dashboard: 'Overview of your business metrics and recent activity',
     analytics: 'Detailed insights and performance analysis',
     reports: 'Generate and view comprehensive reports',
-  };
-  return subtitles[activeTab.value] || 'Welcome to your dashboard';
-};
+  }
+  return subtitles[activeTab.value] || 'Welcome to your dashboard'
+}
 
 const getStatusColor = (status: string): string => {
   const colors: Record<string, string> = {
     active: 'positive',
     pending: 'warning',
     inactive: 'grey',
-  };
-  return colors[status] || 'grey';
-};
+  }
+  return colors[status] || 'grey'
+}
 
 const handleExport = (): void => {
-  console.log('Export functionality');
-};
+  console.log('Export functionality')
+}
 
 const handleNewItem = (): void => {
-  console.log('New item functionality');
-};
+  console.log('New item functionality')
+}
 
 const handleView = (row: TableRow): void => {
-  console.log('View:', row);
-};
+  console.log('View:', row)
+}
 
 const handleEdit = (row: TableRow): void => {
-  console.log('Edit:', row);
-};
+  console.log('Edit:', row)
+}
 
 const handleDelete = (row: TableRow): void => {
-  console.log('Delete:', row);
-};
+  console.log('Delete:', row)
+}
 </script>
 
 <style scoped>
