@@ -4,13 +4,13 @@
 export default {
   index: {
     congratulations: 'Congratulations!',
-    subtitle: 'You are few steps away from setting up your digital screen.',
+    subtitle: "You're just a few steps away from setting up your digital signage.",
     instructions:
-      'To complete the setup, choose whether to setup the device as <strong>standalone</strong> or as centrally managed via <span class="brand-font">DOTYKER CMS</span>.',
+      'To complete the setup, choose whether to configure the device as a standalone unit or manage it centrally via <span class="brand-font">DOTYKER CMS</span>.',
     standalone: 'Standalone',
     managed: 'Managed',
     docs: 'Documentation',
     pwaWarn:
-      '<span class="brand-font">DOTYKER</span> is currently running in browser. For all features, please install it as an Electron desktop application.',
+      '<span class="brand-font">DOTYKER</span> is currently running in your browser. To access all features, please install the Electron desktop application.',
   },
 };

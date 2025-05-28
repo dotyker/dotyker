@@ -29,7 +29,7 @@
           size="xl"
           icon="sym_o_menu_book"
           :label="$t('index.docs')"
-          @click="chooseStandalone"
+          @click="navigateDocumentation"
         />
       </div>
     </div>
@@ -49,5 +49,13 @@ const chooseStandalone = () => {
 
 const chooseManaged = () => {
   stepper.value.next(); // Move to the next step
+};
+
+const navigateDocumentation = () => {
+  if (process.env.MODE === 'electron') {
+    window.location.href = '/browser?url=https://dotyker.org/docs/category/overview';
+  } else {
+    window.open('https://dotyker.org/docs/category/overview', '_blank');
+  }
 };
 </script>
