@@ -53,6 +53,6 @@
 
 <script setup lang="ts">
 defineEmits<{
-  navigate: [url: string];
-}>();
+  navigate: [url: string]
+}>()
 </script>

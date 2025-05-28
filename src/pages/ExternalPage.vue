@@ -150,181 +150,181 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import HomeContent from 'components/HomeContent.vue';
-import LoadingOverlay from 'components/LoadingOverlay.vue';
-import ErrorOverlay from 'components/ErrorOverlay.vue';
+import { ref, computed, onMounted } from 'vue'
+import HomeContent from 'components/HomeContent.vue'
+import LoadingOverlay from 'components/LoadingOverlay.vue'
+import ErrorOverlay from 'components/ErrorOverlay.vue'
 
 // State
-const iframeRef = ref<HTMLIFrameElement | null>(null);
-const urlInput = ref('');
-const currentUrl = ref('');
-const isLoading = ref(false);
-const hasFrameError = ref(false);
-const showInfoDialog = ref(false);
+const iframeRef = ref<HTMLIFrameElement | null>(null)
+const urlInput = ref('')
+const currentUrl = ref('')
+const isLoading = ref(false)
+const hasFrameError = ref(false)
+const showInfoDialog = ref(false)
 
 // Navigation history (only tracks direct URL entries, not iframe navigation)
-const urlHistory = ref<string[]>([]);
-const historyIndex = ref(-1);
+const urlHistory = ref<string[]>([])
+const historyIndex = ref(-1)
 
 // Computed
-const isHome = computed(() => !currentUrl.value);
-const canGoBack = computed(() => historyIndex.value > 0);
-const canGoForward = computed(() => historyIndex.value < urlHistory.value.length - 1);
+const isHome = computed(() => !currentUrl.value)
+const canGoBack = computed(() => historyIndex.value > 0)
+const canGoForward = computed(() => historyIndex.value < urlHistory.value.length - 1)
 
 // Navigation methods
 const navigateToUrl = (): void => {
-  const url = normalizeUrl(urlInput.value.trim());
+  const url = normalizeUrl(urlInput.value.trim())
   if (url) {
-    navigateTo(url);
+    navigateTo(url)
   }
-};
+}
 
 const navigateToQuickUrl = (url: string): void => {
-  urlInput.value = url;
-  navigateTo(url);
-};
+  urlInput.value = url
+  navigateTo(url)
+}
 
 const navigateTo = (url: string): void => {
-  resetState();
-  currentUrl.value = url;
-  urlInput.value = url;
-  isLoading.value = true;
-  addToHistory(url);
-};
+  resetState()
+  currentUrl.value = url
+  urlInput.value = url
+  isLoading.value = true
+  addToHistory(url)
+}
 
 const goHome = (): void => {
-  resetState();
-  currentUrl.value = '';
-  urlInput.value = '';
-};
+  resetState()
+  currentUrl.value = ''
+  urlInput.value = ''
+}
 
 const goBack = (): void => {
   if (canGoBack.value) {
-    historyIndex.value--;
-    const url = urlHistory.value[historyIndex.value];
-    if (!url) return;
-    loadFromHistory(url);
+    historyIndex.value--
+    const url = urlHistory.value[historyIndex.value]
+    if (!url) return
+    loadFromHistory(url)
   }
-};
+}
 
 const goForward = (): void => {
   if (canGoForward.value) {
-    historyIndex.value++;
-    const url = urlHistory.value[historyIndex.value];
-    if (!url) return;
-    loadFromHistory(url);
+    historyIndex.value++
+    const url = urlHistory.value[historyIndex.value]
+    if (!url) return
+    loadFromHistory(url)
   }
-};
+}
 
 const refresh = (): void => {
   if (currentUrl.value) {
-    resetState();
-    isLoading.value = true;
+    resetState()
+    isLoading.value = true
     // Force reload by resetting src
     if (iframeRef.value) {
-      const url = currentUrl.value;
-      iframeRef.value.src = '';
+      const url = currentUrl.value
+      iframeRef.value.src = ''
       setTimeout(() => {
         if (iframeRef.value) {
-          iframeRef.value.src = url;
+          iframeRef.value.src = url
         }
-      }, 100);
+      }, 100)
     }
   }
-};
+}
 
 const openInNewTab = (): void => {
   if (currentUrl.value) {
-    window.open(currentUrl.value, '_blank');
+    window.open(currentUrl.value, '_blank')
   }
-};
+}
 
 // Helper methods
 const normalizeUrl = (input: string): string => {
-  if (!input) return '';
+  if (!input) return ''
 
   if (input.startsWith('http://') || input.startsWith('https://')) {
-    return input;
+    return input
   }
 
   // Check if it looks like a domain
   if (input.includes('.') && !input.includes(' ')) {
-    return `https://${input}`;
+    return `https://${input}`
   }
 
   // Treat as search query
-  return `https://www.google.com/search?q=${encodeURIComponent(input)}`;
-};
+  return `https://www.google.com/search?q=${encodeURIComponent(input)}`
+}
 
 const addToHistory = (url: string): void => {
   // Remove forward history when adding new URL
-  urlHistory.value = urlHistory.value.slice(0, historyIndex.value + 1);
-  urlHistory.value.push(url);
-  historyIndex.value = urlHistory.value.length - 1;
-};
+  urlHistory.value = urlHistory.value.slice(0, historyIndex.value + 1)
+  urlHistory.value.push(url)
+  historyIndex.value = urlHistory.value.length - 1
+}
 
 const loadFromHistory = (url: string): void => {
-  resetState();
-  currentUrl.value = url;
-  urlInput.value = url;
-  isLoading.value = true;
-};
+  resetState()
+  currentUrl.value = url
+  urlInput.value = url
+  isLoading.value = true
+}
 
 const resetState = (): void => {
-  isLoading.value = false;
-  hasFrameError.value = false;
-};
+  isLoading.value = false
+  hasFrameError.value = false
+}
 
 // Event handlers
 const onIframeLoad = (): void => {
-  isLoading.value = false;
-  hasFrameError.value = false;
-};
+  isLoading.value = false
+  hasFrameError.value = false
+}
 
 const onIframeError = (): void => {
-  isLoading.value = false;
-  hasFrameError.value = true;
-};
+  isLoading.value = false
+  hasFrameError.value = true
+}
 
 // Monitor iframe for frame-denial errors
 const monitorIframe = (): void => {
   if (iframeRef.value) {
-    const iframe = iframeRef.value;
+    const iframe = iframeRef.value
 
     // Set up error detection
     const checkFrameError = (): void => {
       try {
         // This will throw if the frame is blocked
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        iframe.contentWindow?.location.href;
+        iframe.contentWindow?.location.href
       } catch (error) {
         if (error instanceof DOMException) {
-          hasFrameError.value = true;
-          isLoading.value = false;
+          hasFrameError.value = true
+          isLoading.value = false
         }
       }
-    };
+    }
 
     // Check after a short delay
-    setTimeout(checkFrameError, 2000);
+    setTimeout(checkFrameError, 2000)
   }
-};
+}
 
 // Watch for iframe changes
 const setupIframeWatcher = (): void => {
   if (iframeRef.value) {
     iframeRef.value.addEventListener('load', () => {
-      onIframeLoad();
-      monitorIframe();
-    });
+      onIframeLoad()
+      monitorIframe()
+    })
 
-    iframeRef.value.addEventListener('error', onIframeError);
+    iframeRef.value.addEventListener('error', onIframeError)
   }
-};
+}
 
 // Initialize
 onMounted(() => {
-  setupIframeWatcher();
-});
+  setupIframeWatcher()
+})
 </script>

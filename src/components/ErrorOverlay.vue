@@ -33,13 +33,13 @@
 
 <script setup lang="ts">
 interface Props {
-  currentUrl: string;
+  currentUrl: string
 }
 
-defineProps<Props>();
+defineProps<Props>()
 
 defineEmits<{
-  retry: [];
-  openExternal: [];
-}>();
+  retry: []
+  openExternal: []
+}>()
 </script>
