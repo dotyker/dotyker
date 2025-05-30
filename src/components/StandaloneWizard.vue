@@ -49,18 +49,6 @@
         :rules="[(val) => (val && val.length > 0) || 'Please type something']"
       />
 
-      <q-input
-        filled
-        type="number"
-        v-model="age"
-        label="Your age *"
-        lazy-rules
-        :rules="[
-          (val) => (val !== null && val !== '') || 'Please type your age',
-          (val) => (val > 0 && val < 100) || 'Please type a real age',
-        ]"
-      />
-
       <div>
         <q-btn
           type="reset"
@@ -86,48 +74,34 @@
 import { useQuasar } from 'quasar'
 import { ref } from 'vue'
 
-export interface EssentialLinkProps {
-  label: string
-  icon?: string
-  to?: string
-  external?: boolean
-}
+const generateRandomDeviceName = () => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  const randomSuffix = Array.from({ length: 7 }, () =>
+    characters.charAt(Math.floor(Math.random() * characters.length)),
+  ).join('')
 
-withDefaults(defineProps<EssentialLinkProps>(), {})
+  return `DOTYKER-${randomSuffix}`
+}
 
 const $q = useQuasar()
 
 const type = ref('multiApp')
 const darkMode = ref($q.dark.isActive)
-const name = ref(null)
-const age = ref(null)
-const accept = ref(false)
-
+const name = ref(generateRandomDeviceName())
 const changeDarkMode = () => {
   $q.dark.set(darkMode.value)
 }
 
 const onSubmit = () => {
-  if (accept.value !== true) {
-    $q.notify({
-      color: 'red-5',
-      textColor: 'white',
-      icon: 'warning',
-      message: 'You need to accept the license and terms first',
-    })
-  } else {
-    $q.notify({
-      color: 'green-4',
-      textColor: 'white',
-      icon: 'cloud_done',
-      message: 'Submitted',
-    })
-  }
+  $q.notify({
+    color: 'green-4',
+    textColor: 'white',
+    icon: 'sym_o_cloud_done',
+    message: 'Submitted',
+  })
 }
 
 const onReset = () => {
-  name.value = null
-  age.value = null
-  accept.value = false
+  name.value = generateRandomDeviceName()
 }
 </script>
