@@ -36,6 +36,11 @@ export default defineConfig((ctx) => {
       // Saves PWA from downloading all the assets on update: https://quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa#filename-hashes-quirk
       useFilenameHashes: false,
 
+      alias: {
+        composables: fileURLToPath(new URL('./src/composables', import.meta.url)),
+        types: fileURLToPath(new URL('./src/types', import.meta.url)),
+      },
+
       target: {
         browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
         node: 'node20',

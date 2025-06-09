@@ -1,5 +1,5 @@
 <template>
-  <div>My component</div>
+  <div>StaticApp</div>
 </template>
 
 <script setup lang="ts">

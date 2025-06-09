@@ -18,18 +18,25 @@ export default {
   standaloneWizard: {
     interactive: {
       label: 'Interactive Modes',
-      multiApp: 'Multi-App',
-      singleApp: 'Single Web',
-      publicBrowser: 'Public Browser',
+      multiApp: 'Multi App',
+      singleApp: 'Single App',
+      publicBrowser: {
+        name: 'Public Browser',
+        defaultUrlLabel: 'Home Page URL',
+        defaultUrlHint: 'Default website shown on start and home button',
+        whitelistLabel: 'Whitelisted URL addresses',
+        whitelistHint: 'Restrict URL addresses that can be visited',
+        whitelistUrlPlaceholder: 'https://example.com',
+      },
     },
     nonInteractive: {
       label: 'Noninteractive Modes',
-      staticWeb: 'Static Web',
-      playlistWeb: 'Web Playlist',
-      media: 'Media Playlist',
+      staticApp: 'Static App',
+      webPlaylist: 'Web Playlist',
+      mediaPlaylist: 'Media Playlist',
     },
     colorTheme: 'Color Theme',
     name: 'Device name',
-    nameDescription: 'Device name',
+    nameDescription: 'Device name shown in administration',
   },
 }
