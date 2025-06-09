@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import StandaloneWizard from 'components/StandaloneWizard.vue'
+import StandaloneWizard from 'components/standalone-wizard/StandaloneWizard.vue'
 
 const currentContent = ref<'initial' | 'standalone' | 'managed'>('initial')
 const mode = process.env.MODE

@@ -41,7 +41,7 @@
       />
 
       <q-input
-        filled
+        borderless
         v-model="name"
         :label="$t('standaloneWizard.name')"
         :hint="$t('standaloneWizard.nameDescription')"
@@ -62,6 +62,7 @@
           type="submit"
           size="xl"
           icon="sym_o_check"
+          flat
           class="q-mx-sm"
           :label="$t('common.submit')"
         />
@@ -73,6 +74,12 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
 import { ref } from 'vue'
+import MultiApp from 'components/standalone-wizard/MultiApp.vue'
+import SingleWeb from 'components/standalone-wizard/SingleWeb.vue'
+import PublicBrowser from 'components/standalone-wizard/PublicBrowser.vue'
+import StaticWeb from 'components/standalone-wizard/MultiApp.vue'
+import WebPlaylist from 'components/standalone-wizard/SingleWeb.vue'
+import MediaPlaylist from 'components/standalone-wizard/PublicBrowser.vue'
 
 const generateRandomDeviceName = () => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
