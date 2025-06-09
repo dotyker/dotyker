@@ -1,5 +1,5 @@
 <template>
-  <div>My component</div>
+  <div>MultiApp</div>
 </template>
 
 <script setup lang="ts">

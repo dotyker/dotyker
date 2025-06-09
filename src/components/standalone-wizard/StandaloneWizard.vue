@@ -9,11 +9,7 @@
         unelevated
         class="no-wrap"
         toggle-color="blue"
-        :options="[
-          { value: 'multiApp', label: $t('standaloneWizard.interactive.multiApp') },
-          { value: 'singleApp', label: $t('standaloneWizard.interactive.singleApp') },
-          { value: 'publicBrowser', label: $t('standaloneWizard.interactive.publicBrowser') },
-        ]"
+        :options="interactiveOptions"
       />
 
       <div class="text-h5">{{ $t('standaloneWizard.nonInteractive.label') }}</div>
@@ -23,11 +19,7 @@
         no-wrap
         unelevated
         toggle-color="blue"
-        :options="[
-          { value: 'staticWeb', label: $t('standaloneWizard.nonInteractive.staticWeb') },
-          { value: 'playlistWeb', label: $t('standaloneWizard.nonInteractive.playlistWeb') },
-          { value: 'media', label: $t('standaloneWizard.nonInteractive.media') },
-        ]"
+        :options="nonInteractiveOptions"
       />
 
       <div class="text-h5">{{ $t('standaloneWizard.colorTheme') }}</div>
@@ -41,12 +33,20 @@
       />
 
       <q-input
-        borderless
+        dense
+        outlined
         v-model="name"
         :label="$t('standaloneWizard.name')"
         :hint="$t('standaloneWizard.nameDescription')"
         lazy-rules
-        :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+        :rules="nameValidationRules"
+      />
+
+      <component
+        :is="selectedComponent"
+        :name="name"
+        :dark-mode="darkMode"
+        @update:name="handleNameUpdate"
       />
 
       <div>
@@ -73,33 +73,61 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import { ref } from 'vue'
-import MultiApp from 'components/standalone-wizard/MultiApp.vue'
-import SingleWeb from 'components/standalone-wizard/SingleWeb.vue'
-import PublicBrowser from 'components/standalone-wizard/PublicBrowser.vue'
-import StaticWeb from 'components/standalone-wizard/MultiApp.vue'
-import WebPlaylist from 'components/standalone-wizard/SingleWeb.vue'
-import MediaPlaylist from 'components/standalone-wizard/PublicBrowser.vue'
+import { ref, computed, defineAsyncComponent } from 'vue'
+import { useDeviceNameGenerator } from 'composables/useDeviceNameGenerator'
+import { useFormValidation } from 'composables/useFormValidation'
+import { useI18n } from 'vue-i18n'
+import type { Component } from 'vue'
+import type { AppType, ToggleOption } from 'types/wizard'
 
-const generateRandomDeviceName = () => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  const randomSuffix = Array.from({ length: 7 }, () =>
-    characters.charAt(Math.floor(Math.random() * characters.length)),
-  ).join('')
+// Composables
+const $q = useQuasar()
+const { t } = useI18n()
+const { generateRandomDeviceName } = useDeviceNameGenerator()
+const { nameValidationRules } = useFormValidation()
 
-  return `DOTYKER-${randomSuffix}`
+// Reactive state
+const type = ref<AppType>('multiApp')
+const darkMode = ref<boolean>($q.dark.isActive)
+const name = ref<string>(generateRandomDeviceName())
+
+// Computed properties
+const interactiveOptions = computed<ToggleOption[]>(() => [
+  { value: 'multiApp', label: t('standaloneWizard.interactive.multiApp') },
+  { value: 'singleApp', label: t('standaloneWizard.interactive.singleApp') },
+  { value: 'publicBrowser', label: t('standaloneWizard.interactive.publicBrowser.name') },
+])
+
+const nonInteractiveOptions = computed<ToggleOption[]>(() => [
+  { value: 'staticApp', label: t('standaloneWizard.nonInteractive.staticApp') },
+  { value: 'webPlaylist', label: t('standaloneWizard.nonInteractive.webPlaylist') },
+  { value: 'mediaPlaylist', label: t('standaloneWizard.nonInteractive.mediaPlaylist') },
+])
+
+const componentMap: Record<AppType, () => Promise<Component>> = {
+  multiApp: () => import('components/standalone-wizard/MultiApp.vue'),
+  singleApp: () => import('components/standalone-wizard/SingleApp.vue'),
+  publicBrowser: () => import('components/standalone-wizard/PublicBrowser.vue'),
+  staticApp: () => import('components/standalone-wizard/StaticApp.vue'),
+  webPlaylist: () => import('components/standalone-wizard/WebPlaylist.vue'),
+  mediaPlaylist: () => import('components/standalone-wizard/MediaPlaylist.vue'),
 }
 
-const $q = useQuasar()
+const selectedComponent = computed(() => {
+  const loader = componentMap[type.value]
+  return loader ? defineAsyncComponent(loader) : null
+})
 
-const type = ref('multiApp')
-const darkMode = ref($q.dark.isActive)
-const name = ref(generateRandomDeviceName())
-const changeDarkMode = () => {
+// Methods
+const changeDarkMode = (): void => {
   $q.dark.set(darkMode.value)
 }
 
-const onSubmit = () => {
+const handleNameUpdate = (newName: string): void => {
+  name.value = newName
+}
+
+const onSubmit = (): void => {
   $q.notify({
     color: 'green-4',
     textColor: 'white',
@@ -108,7 +136,8 @@ const onSubmit = () => {
   })
 }
 
-const onReset = () => {
+const onReset = (): void => {
   name.value = generateRandomDeviceName()
+  type.value = 'multiApp'
 }
 </script>
