@@ -1,0 +1,106 @@
+name: dotyker # you probably want to 'snapcraft register <name>'
+version: 0.0.1 # just for humans, typically '1.2+git' or '1.3.2'
+summary: Highly customizable FOSS digital screen and CMS solution
+description: Highly customizable FOSS digital screen and CMS solution
+confinement: strict
+compression: lzo
+grade: stable
+base: core24
+
+apps:
+  dotyker:
+    command-chain: &_command-chain
+      - bin/wayland-launch
+    command: &_command usr/bin/wrapper
+    plugs: &_plugs
+      - opengl
+      - wayland
+      - browser-support
+      - network
+      - network-bind
+      - audio-playback
+      - network-status
+      - network-observe
+      - mount-observe
+
+    extensions: &_extensions
+      - gnome
+    environment: &_environment
+      XDG_DATA_HOME: $SNAP_USER_DATA
+      XDG_DATA_DIRS: $SNAP/usr/share
+      GTK_USE_PORTAL: 0
+      GDK_GL: gles
+
+  daemon:
+    daemon: simple
+    restart-delay: 2s
+    restart-condition: always
+    command-chain: *_command-chain
+    command: *_command
+    plugs: *_plugs
+    environment: *_environment
+    extensions: *_extensions
+
+environment:
+  # XDG config
+  XDG_CACHE_HOME: $SNAP_USER_COMMON/.cache
+  XDG_CONFIG_HOME: $SNAP_USER_DATA/.config
+  XDG_CONFIG_DIRS: $SNAP/etc/xdg
+  XDG_DATA_DIRS: $SNAP/usr/local/share:$SNAP/usr/share
+  # XKB config
+  XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
+
+# The `layout` ensures that files can be found by applications where they are expected by the toolkit or application.
+layout:
+  /usr/share/fonts:
+    bind: $SNAP/usr/share/fonts
+  /usr/share/icons:
+    bind: $SNAP/usr/share/icons
+  /etc/fonts:
+    bind: $SNAP/etc/fonts
+
+parts:
+  dotyker:
+    plugin: nil
+    source: .
+    build-environment:
+      - PATH: '$PATH:$SNAPCRAFT_PART_BUILD/node_modules/.bin'
+    override-build: |
+      set +u # core20 base does not allow unbound variables !
+
+      npm install --global yarn
+
+      yarn
+      yarn global add @quasar/cli
+      quasar build -m electron
+
+      cp -a ./dist/electron/Packaged/dotyker-linux-* $SNAPCRAFT_PART_INSTALL/dotyker
+      chmod a+rx $SNAPCRAFT_PART_INSTALL/dotyker
+    stage-packages:
+      - libnspr4
+      - libnss3
+    build-snaps:
+      - node/22/stable
+
+  wrapper:
+    plugin: dump
+    source: wrapper
+    organize:
+      wrapper.sh: usr/bin/wrapper
+
+  # Some utility scripts for setting up the Wayland environment
+  setup:
+    plugin: dump
+    source: wayland-launch
+    override-build: |
+      # The plugs needed to run Wayland. (wayland-launch checks them, setup.sh connects them)
+      # You may add further plugs here if you want these options
+      PLUGS="opengl wayland browser-support network network-bind audio-playback network-status network-observe mount-observe"
+      sed --in-place "s/%PLUGS%/$PLUGS/g" $CRAFT_PART_BUILD/bin/wayland-launch
+      sed --in-place "s/%PLUGS%/$PLUGS/g" $CRAFT_PART_BUILD/bin/setup.sh
+      craftctl default
+    stage-packages:
+      - inotify-tools
+
+platforms:
+  amd64:

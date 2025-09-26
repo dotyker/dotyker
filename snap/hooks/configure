@@ -1,0 +1,27 @@
+#!/bin/bash
+set -euo pipefail
+
+daemon=$(snapctl get daemon)
+case "$daemon" in
+  true)
+    # start the daemon
+    if snapctl services "$SNAP_INSTANCE_NAME" | grep -q inactive; then
+      snapctl start --enable "$SNAP_INSTANCE_NAME" 2>&1 || true
+    fi
+    ;;
+  false)
+    # stop the daemon
+        snapctl stop --disable "$SNAP_INSTANCE_NAME" 2>&1 || true
+    ;;
+  *)
+    echo "ERROR: Set 'daemon' to one of true|false"
+    exit 1
+    ;;
+esac
+
+[ -n "$(snapctl get daemon)" ]                           || snapctl set daemon="true"
+[ -n "$(snapctl get cms.url)" ]                          || snapctl set cms.url="https://localhost/"
+[ -n "$(snapctl get system.sound.waitforpulseserver)" ]  || snapctl set system.sound.waitforpulseserver="true"
+[ -n "$(snapctl get system.sound.pulseserver)" ]         || snapctl set system.sound.pulseserver="tcp:localhost:4713"
+
+snapctl restart $SNAP_INSTANCE_NAME
