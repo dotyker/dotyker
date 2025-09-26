@@ -1,0 +1,46 @@
+name: Build Snap
+
+on:
+  push:
+    branches:
+      - main
+      - dev/*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup environment
+        run: |
+          sudo snap install snapcraft --classic
+          sudo snap install lxd --channel=latest/stable
+          sudo adduser $USER lxd
+          sudo lxd init --minimal
+
+          # Fix for lxd and docker conflict
+          sudo iptables -P FORWARD ACCEPT
+
+      - name: Prepare src files for build
+        run: |
+          chmod +x wrapper/wrapper.sh
+          chmod +x wayland-launch/bin/{setup.sh,wayland-launch}
+
+      - name: Clean Snap
+        run: |
+          sudo snapcraft clean --verbose
+
+      - name: Build Snap
+        run: |
+          sudo snapcraft --verbosity=trace
+          mkdir -p artifacts
+          mv *.snap artifacts/
+
+      - name: Upload Snap Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: snap
+          path: artifacts/
