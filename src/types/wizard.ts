@@ -1,10 +1,4 @@
-export type AppType =
-  | 'multiApp'
-  | 'singleApp'
-  | 'publicBrowser'
-  | 'staticApp'
-  | 'webPlaylist'
-  | 'mediaPlaylist'
+export type AppType = 'web' | 'webPlaylist' | 'marketplace'
 
 export interface ToggleOption {
   value: AppType

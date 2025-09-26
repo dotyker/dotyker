@@ -1,17 +1,6 @@
 <template>
   <q-page class="row items-start justify-center text-center">
-    <q-banner ref="banner" v-if="mode === 'pwa'" class="bg-orange col-12">
-      <template v-slot:avatar>
-        <q-icon name="sym_o_warning" />
-      </template>
-      <span class="text-h5" v-html="$t('index.pwaWarn')" />
-    </q-banner>
-
-    <div
-      v-if="currentContent === 'initial'"
-      class="col-12"
-      :class="{ 'self-center': mode !== 'pwa' }"
-    >
+    <div v-if="currentContent === 'initial'" class="col-12 self-center">
       <div class="text-h1 text-center brand-font q-pb-xl">DOTYKER</div>
 
       <h3>{{ $t('index.congratulations') }}</h3>
@@ -37,7 +26,7 @@
         />
       </div>
     </div>
-    <div v-if="currentContent === 'standalone'">
+    <div v-if="currentContent === 'standalone'" class="self-center">
       <standalone-wizard label="test" />
       <q-btn size="xl" icon="sym_o_arrow_back" :label="$t('common.back')" @click="goBack()" />
     </div>
@@ -49,7 +38,6 @@ import { ref } from 'vue'
 import StandaloneWizard from 'components/standalone-wizard/StandaloneWizard.vue'
 
 const currentContent = ref<'initial' | 'standalone' | 'managed'>('initial')
-const mode = process.env.MODE
 
 const chooseStandalone = () => {
   currentContent.value = 'standalone'

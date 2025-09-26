@@ -12,29 +12,12 @@ export default {
     standalone: 'Standalone',
     managed: 'Managed',
     docs: 'Documentation',
-    pwaWarn:
-      '<span class="brand-font">DOTYKER</span> is currently running in your browser. To access all features, please install the Electron desktop application.',
   },
   standaloneWizard: {
-    interactive: {
-      label: 'Interactive Modes',
-      multiApp: 'Multi App',
-      singleApp: 'Single App',
-      publicBrowser: {
-        name: 'Public Browser',
-        defaultUrlLabel: 'Home Page URL',
-        defaultUrlHint: 'Default website shown on start and home button',
-        whitelistLabel: 'Whitelisted URL addresses',
-        whitelistHint: 'Restrict URL addresses that can be visited',
-        whitelistUrlPlaceholder: 'https://example.com',
-      },
-    },
-    nonInteractive: {
-      label: 'Noninteractive Modes',
-      staticApp: 'Static App',
-      webPlaylist: 'Web Playlist',
-      mediaPlaylist: 'Media Playlist',
-    },
+    label: 'Mode',
+    web: 'Single website',
+    webPlaylist: 'Website playlist',
+    marketplace: 'Marketplace',
     colorTheme: 'Color Theme',
     name: 'Device name',
     nameDescription: 'Device name shown in administration',

@@ -1,7 +1,7 @@
 <template>
   <q-card flat class="my-card q-pa-lg q-mb-lg">
     <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-      <div class="text-h5">{{ $t('standaloneWizard.interactive.label') }}</div>
+      <div class="text-h5">{{ $t('standaloneWizard.label') }}</div>
       <q-btn-toggle
         v-model="type"
         spread
@@ -10,16 +10,6 @@
         class="no-wrap"
         toggle-color="blue"
         :options="interactiveOptions"
-      />
-
-      <div class="text-h5">{{ $t('standaloneWizard.nonInteractive.label') }}</div>
-      <q-btn-toggle
-        v-model="type"
-        spread
-        no-wrap
-        unelevated
-        toggle-color="blue"
-        :options="nonInteractiveOptions"
       />
 
       <div class="text-h5">{{ $t('standaloneWizard.colorTheme') }}</div>
@@ -87,30 +77,21 @@ const { generateRandomDeviceName } = useDeviceNameGenerator()
 const { nameValidationRules } = useFormValidation()
 
 // Reactive state
-const type = ref<AppType>('multiApp')
+const type = ref<AppType>('web')
 const darkMode = ref<boolean>($q.dark.isActive)
 const name = ref<string>(generateRandomDeviceName())
 
 // Computed properties
 const interactiveOptions = computed<ToggleOption[]>(() => [
-  { value: 'multiApp', label: t('standaloneWizard.interactive.multiApp') },
-  { value: 'singleApp', label: t('standaloneWizard.interactive.singleApp') },
-  { value: 'publicBrowser', label: t('standaloneWizard.interactive.publicBrowser.name') },
-])
-
-const nonInteractiveOptions = computed<ToggleOption[]>(() => [
-  { value: 'staticApp', label: t('standaloneWizard.nonInteractive.staticApp') },
-  { value: 'webPlaylist', label: t('standaloneWizard.nonInteractive.webPlaylist') },
-  { value: 'mediaPlaylist', label: t('standaloneWizard.nonInteractive.mediaPlaylist') },
+  { value: 'web', label: t('standaloneWizard.web') },
+  { value: 'webPlaylist', label: t('standaloneWizard.webPlaylist') },
+  { value: 'marketplace', label: t('standaloneWizard.marketplace') },
 ])
 
 const componentMap: Record<AppType, () => Promise<Component>> = {
-  multiApp: () => import('components/standalone-wizard/MultiApp.vue'),
-  singleApp: () => import('components/standalone-wizard/SingleApp.vue'),
-  publicBrowser: () => import('components/standalone-wizard/PublicBrowser.vue'),
-  staticApp: () => import('components/standalone-wizard/StaticApp.vue'),
-  webPlaylist: () => import('components/standalone-wizard/WebPlaylist.vue'),
-  mediaPlaylist: () => import('components/standalone-wizard/MediaPlaylist.vue'),
+  web: () => import('components/standalone-wizard/MultiApp.vue'),
+  webPlaylist: () => import('components/standalone-wizard/SingleApp.vue'),
+  marketplace: () => import('components/standalone-wizard/PublicBrowser.vue'),
 }
 
 const selectedComponent = computed(() => {
@@ -138,6 +119,6 @@ const onSubmit = (): void => {
 
 const onReset = (): void => {
   name.value = generateRandomDeviceName()
-  type.value = 'multiApp'
+  type.value = 'web'
 }
 </script>
