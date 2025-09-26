@@ -2,7 +2,7 @@
   "name": "dotyker",
   "version": "0.0.1",
   "description": "Highly customizable FOSS digital screen and CMS solution",
-  "productName": "Dotyker",
+  "productName": "dotyker",
   "author": "Jakub Šindelář <megastary@proton.me>",
   "type": "module",
   "private": true,
