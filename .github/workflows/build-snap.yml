@@ -1,18 +1,55 @@
 name: Build Snap
-
 on:
   push:
     branches:
       - main
-      - dev/*
+      - feature/*
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      snap-name: ${{ steps.version.outputs.snap-name }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+
+      - name: Generate version
+        id: version
+        run: |
+          # Read version from package.json
+          BASE_VERSION=$(node -p "require('./package.json').version")
+
+          # Get current date, run number, and commit SHA for build metadata
+          BUILD_DATE=$(date +'%Y%m%d')
+          BUILD_ID="${GITHUB_RUN_NUMBER}"
+          COMMIT_SHA="${GITHUB_SHA:0:7}"
+          BUILD_METADATA="${BUILD_DATE}.${BUILD_ID}.${COMMIT_SHA}"
+
+          # Generate version based on branch following SemVer
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            # Main branch: base version + build metadata
+            VERSION="${BASE_VERSION}+${BUILD_METADATA}"
+            PRERELEASE_SUFFIX=""
+          else
+            # Feature/dev branches: base version + prerelease identifier + build metadata
+            BRANCH_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9]/./')
+            PRERELEASE_SUFFIX="${BRANCH_NAME}"
+            VERSION="${BASE_VERSION}-${PRERELEASE_SUFFIX}+${BUILD_METADATA}"
+          fi
+
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "base-version=${BASE_VERSION}" >> $GITHUB_OUTPUT
+          echo "prerelease-suffix=${PRERELEASE_SUFFIX}" >> $GITHUB_OUTPUT
+          echo "build-metadata=${BUILD_METADATA}" >> $GITHUB_OUTPUT
+
+          # Generate snap filename (you may need to adjust this based on your snap name)
+          SNAP_NAME=$(grep "^name:" snapcraft.yaml | cut -d: -f2 | tr -d ' ')
+          echo "snap-name=${SNAP_NAME}_${VERSION}_amd64.snap" >> $GITHUB_OUTPUT
+
+          echo "Generated version: ${VERSION}"
+          echo "Snap name will be: ${SNAP_NAME}_${VERSION}_amd64.snap"
 
       - name: Setup environment
         run: |
@@ -20,7 +57,6 @@ jobs:
           sudo snap install lxd --channel=latest/stable
           sudo adduser $USER lxd
           sudo lxd init --minimal
-
           # Fix for lxd and docker conflict
           sudo iptables -P FORWARD ACCEPT
 
@@ -28,6 +64,11 @@ jobs:
         run: |
           chmod +x wrapper/wrapper.sh
           chmod +x wayland-launch/bin/{setup.sh,wayland-launch}
+
+      - name: Update snap version
+        run: |
+          # Update version in snapcraft.yaml
+          sed -i "s/^version:.*/version: '${{ steps.version.outputs.version }}'/" snapcraft.yaml
 
       - name: Clean Snap
         run: |
@@ -42,5 +83,71 @@ jobs:
       - name: Upload Snap Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: snap
+          name: snap-${{ steps.version.outputs.version }}
           path: artifacts/
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: success()
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Download Snap Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: snap-${{ needs.build.outputs.version }}
+          path: artifacts/
+
+      - name: Generate release notes
+        id: release-notes
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            RELEASE_TYPE="Release"
+            PRERELEASE="false"
+          else
+            RELEASE_TYPE="Pre-release"
+            PRERELEASE="true"
+          fi
+
+          cat > release_notes.md << EOF
+          ## $RELEASE_TYPE ${{ needs.build.outputs.version }}
+
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}
+          **Build Date:** $(date +'%Y-%m-%d %H:%M:%S UTC')
+          **Build Metadata:** ${{ needs.build.outputs.build-metadata }}
+
+          ### Version Information
+          - **Base Version:** ${{ needs.build.outputs.base-version }}
+          $(if [[ "${{ needs.build.outputs.prerelease-suffix }}" != "" ]]; then echo "- **Pre-release:** ${{ needs.build.outputs.prerelease-suffix }}"; fi)
+          - **Build Metadata:** ${{ needs.build.outputs.build-metadata }}
+
+          ### Changes
+          - Built from commit: [\`${GITHUB_SHA:0:7}\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+
+          ### Installation
+          Download the snap file and install it using:
+          \`\`\`bash
+          sudo snap install --dangerous ./${{ needs.build.outputs.snap-name }}
+          \`\`\`
+
+          > **Note:** The \`--dangerous\` flag is required for installing unsigned snap packages.
+          EOF
+
+          echo "prerelease=${PRERELEASE}" >> $GITHUB_OUTPUT
+          echo "release-type=${RELEASE_TYPE}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2.3.3
+        with:
+          tag_name: v${{ needs.build.outputs.version }}
+          name: ${{ steps.release-notes.outputs.release-type }} v${{ needs.build.outputs.version }}
+          body_path: release_notes.md
+          files: artifacts/*.snap
+          prerelease: ${{ steps.release-notes.outputs.prerelease }}
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
