@@ -24,7 +24,7 @@ jobs:
           # Get current date, run number, and commit SHA for build metadata
           BUILD_DATE=$(date +'%Y%m%d')
           BUILD_ID="${GITHUB_RUN_NUMBER}"
-          COMMIT_SHA="${GITHUB_SHA:0:7}"
+          COMMIT_SHA="${GITHUB_SHA:0:5}"
           BUILD_METADATA="${BUILD_DATE}.${BUILD_ID}.${COMMIT_SHA}"
 
           # Generate version based on branch following SemVer
