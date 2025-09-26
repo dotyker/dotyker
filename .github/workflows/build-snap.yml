@@ -45,7 +45,7 @@ jobs:
           echo "build-metadata=${BUILD_METADATA}" >> $GITHUB_OUTPUT
 
           # Generate snap filename (you may need to adjust this based on your snap name)
-          SNAP_NAME=$(grep "^name:" snapcraft.yaml | cut -d: -f2 | tr -d ' ')
+          SNAP_NAME=$(grep "^name:" snap/snapcraft.yaml | cut -d: -f2 | tr -d ' ')
           echo "snap-name=${SNAP_NAME}_${VERSION}_amd64.snap" >> $GITHUB_OUTPUT
 
           echo "Generated version: ${VERSION}"
@@ -67,8 +67,7 @@ jobs:
 
       - name: Update snap version
         run: |
-          # Update version in snapcraft.yaml
-          sed -i "s/^version:.*/version: '${{ steps.version.outputs.version }}'/" snapcraft.yaml
+          sed -i "s/^version:.*/version: '${{ steps.version.outputs.version }}'/" snap/snapcraft.yaml
 
       - name: Clean Snap
         run: |
