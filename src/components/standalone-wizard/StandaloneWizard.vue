@@ -2,14 +2,25 @@
   <q-card flat class="my-card q-pa-lg q-mb-lg">
     <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
       <div class="text-h5">{{ $t('standaloneWizard.label') }}</div>
-      <q-btn-toggle
-        v-model="type"
-        spread
-        no-wrap
-        unelevated
-        class="no-wrap"
-        toggle-color="blue"
-        :options="interactiveOptions"
+      <q-btn
+        square
+        size="2rem"
+        icon="sym_o_web_asset"
+        stack
+        :label="$t('standaloneWizard.singleWeb')"
+        padding="lg"
+      />
+      <q-btn square size="2rem" icon="sym_o_select_window" stack padding="lg">{{
+        $t('standaloneWizard.multiWeb')
+      }}</q-btn>
+      <q-btn
+        flat
+        size="2rem"
+        icon="sym_o_add"
+        stack
+        :label="$t('standaloneWizard.pluginMarketplace')"
+        padding="lg"
+        class="marketplace"
       />
 
       <div class="text-h5">{{ $t('standaloneWizard.colorTheme') }}</div>
@@ -66,13 +77,11 @@ import { useQuasar } from 'quasar'
 import { ref, computed, defineAsyncComponent } from 'vue'
 import { useDeviceNameGenerator } from 'composables/useDeviceNameGenerator'
 import { useFormValidation } from 'composables/useFormValidation'
-import { useI18n } from 'vue-i18n'
 import type { Component } from 'vue'
-import type { AppType, ToggleOption } from 'types/wizard'
+import type { AppType } from 'types/wizard'
 
 // Composables
 const $q = useQuasar()
-const { t } = useI18n()
 const { generateRandomDeviceName } = useDeviceNameGenerator()
 const { nameValidationRules } = useFormValidation()
 
@@ -80,13 +89,6 @@ const { nameValidationRules } = useFormValidation()
 const type = ref<AppType>('singleWeb')
 const darkMode = ref<boolean>($q.dark.isActive)
 const name = ref<string>(generateRandomDeviceName())
-
-// Computed properties
-const interactiveOptions = computed<ToggleOption[]>(() => [
-  { value: 'singleWeb', label: t('standaloneWizard.singleWeb') },
-  { value: 'multiWeb', label: t('standaloneWizard.multiWeb') },
-  { value: 'pluginMarketplace', label: t('standaloneWizard.pluginMarketplace') },
-])
 
 const componentMap: Record<AppType, () => Promise<Component>> = {
   singleWeb: () => import('components/standalone-wizard/SingleWeb.vue'),
@@ -122,3 +124,9 @@ const onReset = (): void => {
   type.value = 'singleWeb'
 }
 </script>
+
+<style lang="css">
+.marketplace {
+  border: 2px dashed #ccc;
+}
+</style>
