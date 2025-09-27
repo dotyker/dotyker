@@ -77,21 +77,21 @@ const { generateRandomDeviceName } = useDeviceNameGenerator()
 const { nameValidationRules } = useFormValidation()
 
 // Reactive state
-const type = ref<AppType>('web')
+const type = ref<AppType>('singleWeb')
 const darkMode = ref<boolean>($q.dark.isActive)
 const name = ref<string>(generateRandomDeviceName())
 
 // Computed properties
 const interactiveOptions = computed<ToggleOption[]>(() => [
-  { value: 'web', label: t('standaloneWizard.web') },
-  { value: 'webPlaylist', label: t('standaloneWizard.webPlaylist') },
-  { value: 'marketplace', label: t('standaloneWizard.marketplace') },
+  { value: 'singleWeb', label: t('standaloneWizard.singleWeb') },
+  { value: 'multiWeb', label: t('standaloneWizard.multiWeb') },
+  { value: 'pluginMarketplace', label: t('standaloneWizard.pluginMarketplace') },
 ])
 
 const componentMap: Record<AppType, () => Promise<Component>> = {
-  web: () => import('components/standalone-wizard/MultiApp.vue'),
-  webPlaylist: () => import('components/standalone-wizard/SingleApp.vue'),
-  marketplace: () => import('components/standalone-wizard/PublicBrowser.vue'),
+  singleWeb: () => import('components/standalone-wizard/SingleWeb.vue'),
+  multiWeb: () => import('components/standalone-wizard/MultiWeb.vue'),
+  pluginMarketplace: () => import('components/standalone-wizard/PluginMarketplace.vue'),
 }
 
 const selectedComponent = computed(() => {
@@ -119,6 +119,6 @@ const onSubmit = (): void => {
 
 const onReset = (): void => {
   name.value = generateRandomDeviceName()
-  type.value = 'web'
+  type.value = 'singleWeb'
 }
 </script>

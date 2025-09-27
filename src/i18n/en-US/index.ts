@@ -15,9 +15,9 @@ export default {
   },
   standaloneWizard: {
     label: 'Mode',
-    web: 'Single website',
-    webPlaylist: 'Website playlist',
-    marketplace: 'Marketplace',
+    singleWeb: 'Single website',
+    multiWeb: 'Website playlist',
+    pluginMarketplace: 'Marketplace',
     colorTheme: 'Color Theme',
     name: 'Device name',
     nameDescription: 'Device name shown in administration',
