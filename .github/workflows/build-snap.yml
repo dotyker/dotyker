@@ -24,7 +24,7 @@ jobs:
           # Get current date, run number, and commit SHA for build metadata
           BUILD_DATE=$(date +'%Y%m%d')
           BUILD_ID="${GITHUB_RUN_NUMBER}"
-          COMMIT_SHA="${GITHUB_SHA:0:5}"
+          COMMIT_SHA="${GITHUB_SHA:0:7}"
           BUILD_METADATA="${BUILD_DATE}.${BUILD_ID}.${COMMIT_SHA}"
 
           # Generate version based on branch following SemVer
@@ -38,6 +38,8 @@ jobs:
             PRERELEASE_SUFFIX="${BRANCH_NAME}"
             VERSION="${BASE_VERSION}-${PRERELEASE_SUFFIX}+${BUILD_METADATA}"
           fi
+          # Trim if version exceeds max length
+          VERSION="${VERSION:0:32}"
 
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "base-version=${BASE_VERSION}" >> $GITHUB_OUTPUT
