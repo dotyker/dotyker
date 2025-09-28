@@ -3,12 +3,14 @@ import { useDeviceState } from 'src/stores/device-state'
 import { Dark } from 'quasar'
 import { watch } from 'vue'
 
-export default defineBoot(async ({ router, store }) => {
+export default defineBoot(({ router, store }) => {
   const deviceState = useDeviceState(store)
 
   if (deviceState.dark) Dark.set(true)
 
-  await router.replace(deviceState.index)
+  setTimeout(() => {
+    void router.replace(deviceState.index)
+  }, 2500)
 
   watch(
     () => Dark.isActive,
