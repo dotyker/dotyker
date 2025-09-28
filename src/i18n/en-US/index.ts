@@ -14,12 +14,12 @@ export default {
     docs: 'Documentation',
   },
   standaloneWizard: {
-    label: 'Mode',
-    singleWeb: 'Single website',
-    multiWeb: 'Website playlist',
-    pluginMarketplace: 'Marketplace',
-    colorTheme: 'Color Theme',
+    label: 'Standalone device',
+    selectDeviceMode: 'Select device mode',
+    websitePage: 'Website Pages',
+    mediaSlideshow: 'Media Slideshow',
+    pluginMarketplace: 'Get more',
     name: 'Device name',
-    nameDescription: 'Device name shown in administration',
+    nameDescription: 'Device hostname',
   },
 }

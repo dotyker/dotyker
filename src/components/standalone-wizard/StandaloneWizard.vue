@@ -1,38 +1,7 @@
 <template>
   <q-card flat class="my-card q-pa-lg q-mb-lg">
     <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-      <div class="text-h5">{{ $t('standaloneWizard.label') }}</div>
-      <q-btn
-        square
-        size="2rem"
-        icon="sym_o_web_asset"
-        stack
-        :label="$t('standaloneWizard.singleWeb')"
-        padding="lg"
-      />
-      <q-btn square size="2rem" icon="sym_o_select_window" stack padding="lg">{{
-        $t('standaloneWizard.multiWeb')
-      }}</q-btn>
-      <q-btn
-        flat
-        size="2rem"
-        icon="sym_o_add"
-        stack
-        :label="$t('standaloneWizard.pluginMarketplace')"
-        padding="lg"
-        class="marketplace"
-      />
-
-      <div class="text-h5">{{ $t('standaloneWizard.colorTheme') }}</div>
-      <q-toggle
-        v-model="darkMode"
-        size="xl"
-        icon-color="blue"
-        checked-icon="sym_o_dark_mode"
-        unchecked-icon="sym_o_light_mode"
-        @click="changeDarkMode"
-      />
-
+      <div class="text-h4">{{ $t('standaloneWizard.label') }}</div>
       <q-input
         dense
         outlined
@@ -41,13 +10,20 @@
         :hint="$t('standaloneWizard.nameDescription')"
         lazy-rules
         :rules="nameValidationRules"
-      />
+      >
+        <template v-slot:after>
+          <q-btn
+            :icon="$q.dark.isActive ? 'sym_o_dark_mode' : 'sym_o_light_mode'"
+            @click="changeDarkMode"
+          />
+        </template>
+      </q-input>
 
       <component
         :is="selectedComponent"
         :name="name"
-        :dark-mode="darkMode"
-        @update:name="handleNameUpdate"
+        :current-stage="type"
+        @update:stage="handleStageUpdate"
       />
 
       <div>
@@ -78,7 +54,7 @@ import { ref, computed, defineAsyncComponent } from 'vue'
 import { useDeviceNameGenerator } from 'composables/useDeviceNameGenerator'
 import { useFormValidation } from 'composables/useFormValidation'
 import type { Component } from 'vue'
-import type { AppType } from 'types/wizard'
+import type { StandaloneWizardStage } from 'types/wizard'
 
 // Composables
 const $q = useQuasar()
@@ -86,13 +62,13 @@ const { generateRandomDeviceName } = useDeviceNameGenerator()
 const { nameValidationRules } = useFormValidation()
 
 // Reactive state
-const type = ref<AppType>('singleWeb')
-const darkMode = ref<boolean>($q.dark.isActive)
+const type = ref<StandaloneWizardStage>('selectDeviceMode')
 const name = ref<string>(generateRandomDeviceName())
 
-const componentMap: Record<AppType, () => Promise<Component>> = {
-  singleWeb: () => import('components/standalone-wizard/SingleWeb.vue'),
-  multiWeb: () => import('components/standalone-wizard/MultiWeb.vue'),
+const componentMap: Record<StandaloneWizardStage, () => Promise<Component>> = {
+  selectDeviceMode: () => import('components/standalone-wizard/SelectDeviceMode.vue'),
+  websitePage: () => import('components/standalone-wizard/WebsitePage.vue'),
+  mediaSlideshow: () => import('components/standalone-wizard/MediaSlideshow.vue'),
   pluginMarketplace: () => import('components/standalone-wizard/PluginMarketplace.vue'),
 }
 
@@ -103,11 +79,11 @@ const selectedComponent = computed(() => {
 
 // Methods
 const changeDarkMode = (): void => {
-  $q.dark.set(darkMode.value)
+  $q.dark.set(!$q.dark.isActive)
 }
 
-const handleNameUpdate = (newName: string): void => {
-  name.value = newName
+const handleStageUpdate = (newStage: StandaloneWizardStage): void => {
+  type.value = newStage
 }
 
 const onSubmit = (): void => {
@@ -121,12 +97,6 @@ const onSubmit = (): void => {
 
 const onReset = (): void => {
   name.value = generateRandomDeviceName()
-  type.value = 'singleWeb'
+  type.value = 'selectDeviceMode'
 }
 </script>
-
-<style lang="css">
-.marketplace {
-  border: 2px dashed #ccc;
-}
-</style>

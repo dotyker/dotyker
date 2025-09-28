@@ -1,17 +1,10 @@
-export type AppType = 'singleWeb' | 'multiWeb' | 'pluginMarketplace'
-
-export interface ToggleOption {
-  value: AppType
-  label: string
-}
+export type StandaloneWizardStage =
+  | 'selectDeviceMode'
+  | 'websitePage'
+  | 'mediaSlideshow'
+  | 'pluginMarketplace'
 
 export type ValidationRule = (val: string | null) => boolean | string
-
-export interface WizardFormData {
-  type: AppType
-  name: string
-  darkMode: boolean
-}
 
 export interface ComponentProps {
   name: string
