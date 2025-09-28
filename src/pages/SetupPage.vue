@@ -1,5 +1,5 @@
 <template>
-  <q-page class="row items-start justify-center text-center">
+  <q-page class="row items-start justify-center text-center non-selectable">
     <div v-if="currentContent === 'initial'" class="col-12 self-center">
       <div class="text-h1 text-center brand-font q-pb-xl">DOTYKER</div>
 
@@ -27,7 +27,7 @@
       </div>
     </div>
     <div v-if="currentContent === 'standalone'" class="self-center">
-      <standalone-wizard label="test" />
+      <standalone-wizard />
       <q-btn size="xl" icon="sym_o_arrow_back" :label="$t('common.back')" @click="goBack()" />
     </div>
   </q-page>

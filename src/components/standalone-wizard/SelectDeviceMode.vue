@@ -1,27 +1,23 @@
 <template>
-  <q-card flat class="my-card q-pa-lg q-mb-lg q-gutter-md">
+  <q-card flat class="q-gutter-md">
     <div class="text-h5">{{ $t('standaloneWizard.selectDeviceMode') }}</div>
 
     <div class="row q-gutter-md justify-center">
       <q-btn
         class="mode-button"
-        square
         size="2vh"
         icon="sym_o_select_window"
         stack
-        :label="$t('standaloneWizard.websitePage')"
-        padding="lg"
+        :label="$t('standaloneWizard.websitePage.label')"
         @click="selectMode('websitePage')"
       />
 
       <q-btn
         class="mode-button"
-        square
         size="2vh"
         icon="sym_o_wallpaper_slideshow"
         stack
         :label="$t('standaloneWizard.mediaSlideshow')"
-        padding="lg"
         @click="selectMode('mediaSlideshow')"
       />
 
@@ -32,7 +28,6 @@
         icon="sym_o_add"
         stack
         :label="$t('standaloneWizard.pluginMarketplace')"
-        padding="lg"
         @click="selectMode('pluginMarketplace')"
       />
     </div>

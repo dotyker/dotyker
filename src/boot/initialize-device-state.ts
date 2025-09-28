@@ -10,7 +10,7 @@ export default defineBoot(({ router, store }) => {
 
   setTimeout(() => {
     void router.replace(deviceState.index)
-  }, 2500)
+  }, 3000)
 
   watch(
     () => Dark.isActive,
